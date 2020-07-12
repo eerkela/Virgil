@@ -2886,8 +2886,7 @@ class ElfGenerator:
             if (mid[-1] == suff[0]):
                 suff = suff[1:]
 
-            # Add glue where necessary, but only to high elf and wood elf names
-<<<<<<< HEAD
+            # Add glue where necessary
             vowels = ['a', 'e', 'i', 'o', 'u']
             vowel_glue = ''
             if (self.race.lower() == 'drow'):
@@ -2896,21 +2895,11 @@ class ElfGenerator:
                 else:
                     vowel_glue = 'i'
             else:
-=======
-            vowels = ['a', 'e', 'i', 'o', 'u', 'w']
-            vowel_glue = ''
-            if (self.race.lower() != 'drow'):
->>>>>>> 1daa22fcdaf985d259788b98a6082133a28e7fbc
                 if (gender.lower() == 'male'):
                     vowel_glue = 'a'
                 else:
                     vowel_glue = 'e'
 
-<<<<<<< HEAD
-=======
-            if (pref[-1] not in vowels and mid[0] not in vowels):
-                pref += vowel_glue
->>>>>>> 1daa22fcdaf985d259788b98a6082133a28e7fbc
             if (mid[-1] not in vowels and suff[0] not in vowels):
                 mid += vowel_glue
 
