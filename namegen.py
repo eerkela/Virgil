@@ -2841,6 +2841,7 @@ class ElfGenerator:
 
     def __init__(self, race: str, duplicate_limit: int = 20):
         self.duplicate_limit = duplicate_limit
+        self.race = race
         if (race.lower() == 'high elf'):
             path = os.path.join('Names', 'Fantasy', 'Fair_And_Noble.json')
             with open(path) as f:
@@ -2878,8 +2879,31 @@ class ElfGenerator:
             pref = pick_random(prefixes)
             mid = pick_random(middle)
             suff = pick_random(suffixes)
-            name = ''.join([pref, mid, suff]).title()
 
+            # Remove duplicate letters
+            if (pref[-1] == mid[0]):
+                pref = pref[:-1]
+            if (mid[-1] == suff[0]):
+                suff = suff[1:]
+
+            # Add glue where necessary, but only to high elf and wood elf names
+            vowels = ['a', 'e', 'i', 'o', 'u']
+            vowel_glue = ''
+            if (self.race.lower() == 'drow'):
+                if (gender.lower() == 'male'):
+                    vowel_glue = 'i'
+                else:
+                    vowel_glue = 'i'
+            else:
+                if (gender.lower() == 'male'):
+                    vowel_glue = 'a'
+                else:
+                    vowel_glue = 'e'
+
+            if (mid[-1] not in vowels and suff[0] not in vowels):
+                mid += vowel_glue
+
+            name = ''.join([pref, mid, suff]).title()
             if name in names:
                 i += 1
             else:
@@ -2888,7 +2912,10 @@ class ElfGenerator:
 
 class DoughtyGenerator:
 
+    #TODO: move gnome into its own generator -> comical_long+comical_short
+
     def __init__(self, race, duplicate_limit=20):
+        self.race = race
         self.duplicate_limit = duplicate_limit
         path = os.path.join('Names', 'Fantasy', 'Doughty_And_Homely.json')
         with open(path) as f:
@@ -2912,12 +2939,34 @@ class DoughtyGenerator:
         while (len(names) < amount and i < self.duplicate_limit):
             name = ''
             root = pick_random(self.list['Prefix'])
+            ending = ''
             if (gender.lower() == 'male'):
-                name = root + pick_random(self.list['Suffix']['Male'])
+                ending = pick_random(self.list['Suffix']['Male'])
             elif (gender.lower() == 'female'):
-                name = root + pick_random(self.list['Suffix']['Female'])
+                ending = pick_random(self.list['Suffix']['Female'])
+            else:
+                raise Exception('gender not recognized: ' + str(gender))
 
-            name = name.title()
+            vowels = ['a', 'e', 'i', 'o', 'u']
+            if (self.race.lower() == 'gnome'):
+                if (root[-1] in vowels):
+                    root += 'l'
+            elif (self.race.lower() == 'dwarf'):
+                r = random.randrange(1, 8)
+                if (r == 1):
+                    if (gender.lower() == 'male'):
+                        if (root[-1] in vowels):
+                            ending = 'r'
+                        else:
+                            ending = 'i'
+                    elif (gender.lower() == 'female'):
+                        if (root[-1] in vowels):
+                            ending = 'ra'
+                        else:
+                            ending = 'a'
+
+
+            name = (root + ending).title()
             if name in names:
                 i += 1
             else:
